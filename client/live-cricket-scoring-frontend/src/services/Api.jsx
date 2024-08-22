@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = 'http://localhost:8080/api/matches/';
+const API_URL = 'https://live-cricket-scoring-app.onrender.com/api/matches/';
 
 export const getAllMatch = async (id) => {
   try {
