@@ -22,9 +22,19 @@ export const getMatchById = async (id) => {
   }
 };
 
-export const updateMatch = async (id,data) =>{
+export const updateMatch = async (id, data) => {
   try {
-    const response = await axios.put(`${API_URL}/update/${id}`,data);
+    const response = await axios.put(`${API_URL}/update/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching match data:', error);
+    return null;
+  }
+}
+
+export const createMatch = async (data) => {
+  try {
+    const response = await axios.post(`${API_URL}/create`, data);
     return response.data;
   } catch (error) {
     console.error('Error fetching match data:', error);

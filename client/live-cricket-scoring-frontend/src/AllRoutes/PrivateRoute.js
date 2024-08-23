@@ -1,39 +1,40 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useLocation, Navigate } from 'react-router-dom'
-import { singleuser } from '../redux/Auth/auth.action'
+import React, { useEffect, useState } from "react";
+import { useLocation, Navigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const PrivateRoute = ({ children }) => {
-    const location = useLocation()
-    const isAuth = useSelector((store) => store.auth.isAuth);
-    const dispatch = useDispatch();
-    const [isLoading, setIsLoading] = useState(true)
+  const location = useLocation();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    useEffect(() => {
-        if (!isAuth) {
-            const token = localStorage.getItem("token")
-            if (token) {
-                dispatch(singleuser())
-                    .then(() => setIsLoading(false))
-                    .catch(() => setIsLoading(false))
-            } else {
-                setIsLoading(false)
-            }
-        } else {
-            setIsLoading(false)
-        }
-    }, [dispatch, isAuth])
+  useEffect(() => {
+    const checkAuth = () => {
+      const adminAuth = localStorage.getItem("adminauth");
+      const userAuth = localStorage.getItem("auth");
 
-    console.log(isAuth)
+      // Check for adminAuth first
+      if (adminAuth === "true") {
+        setIsAuthenticated(true);
+        // User is authenticated but not an admin
+      } else {
+        setIsAuthenticated(false);
+      }
+      setIsLoading(false);
+    };
 
-    if (isLoading) {
-        return <div>Loading...</div>
-    }
-    if (!isAuth) {
-        return <Navigate to="/login" state={{ from: location }}></Navigate>
-    }
+    checkAuth(); // Check auth status
+  }, []);
 
-    return children
-}
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-export default PrivateRoute 
+  if (!isAuthenticated) {
+    toast.error("Admin authentication is required!")
+    return <Navigate to="/login" state={{ from: location }} />;
+  }
+
+  return children;
+};
+
+export default PrivateRoute;
